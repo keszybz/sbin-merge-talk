@@ -29,7 +29,9 @@
 \newcommand\pp{}
 
 
-\title{\textsc{Unifying /usr/bin and /usr/sbin}}
+\title{\textsc{Unifying /usr/bin and /usr/sbin}\\
+  {\small a.k.a.}\\
+  UsrMove is not done until SbinMerge is done}
 \author{Zbigniew Jędrzejewski-Szmek}
 \institute{%
   \includegraphics[width=0.4\textwidth]{images/Logo-redhat-color-375.png}\\
@@ -93,7 +95,7 @@
   \phantom{1670} — a third disk is attached and /home is created\\
   \pause
 
-  split \texttt{/usr} \textit{is} useful:\\
+  split \texttt{/usr} \textit{was} useful:\\
   \pause
   \phantom{1670} — fsck time proportional to fs size\\
   \phantom{1670} — periodic fsck (180 days or n mounts)\\
@@ -101,7 +103,10 @@
 
   1990 — JFS in AIX 3.1\\
   1993 — NTFS in Windows NT\\
-  2001 — EXT3 in Linux
+  2001 — EXT3 in Linux\\
+
+  \pause
+  initrds
 
   \vfill
 
@@ -151,6 +156,9 @@
   polkit — allow unprivileged processes to elevate privileges via IPC
   \\
 
+  \pause
+  sudo
+
   \vfill
 
   \pause
@@ -193,8 +201,8 @@
   \frametitle{Unifying \texttt{/usr/sbin} and \texttt{/usr/bin}}
 
   \pause
-  Idea: make \texttt{/usr/sbin} a symlink to \texttt{/usr/bin},\\
-  just like \texttt{/bin} is a symlink to \texttt{/usr/bin}\\
+  Idea:~make \texttt{/usr/sbin} a symlink to \texttt{/usr/bin},\\
+  \phantom{Idea:}~just like \texttt{/bin} is a symlink to \texttt{/usr/bin}\\
 
   \href{https://fedoraproject.org/wiki/Changes/Unify_bin_and_sbin}{Changes/Unify\_bin\_and\_sbin}
   — Fedora 41, 2024
@@ -222,7 +230,7 @@
 
   — no "flag day"
   \\\pause
-  \phantom{—} — preparatory changes are conditional%, compatible with both worldviews
+  \phantom{—} — conditional preparatory changes%, compatible with both worldviews
   \\\pause
   \phantom{—} — individual packages are updated when rebuilt
   \\\pause
@@ -234,13 +242,14 @@
   % https://lists.fedoraproject.org/archives/list/devel@lists.fedoraproject.org/message/3562IKYYO4YLC5IPS3WSV3DNQXW3V7QG/
 
   \pause
-  0. Adjust SELinux policy to make /sbin and /bin equivalent\\
-  \textit{307 files changed, 862 insertions(+), 1261 deletions(-)}
-  \\\pause
-
   1. Remove Packaging Guidelines rule to use "historical" locations\\
      \hspace*{5em} for \texttt{/bin} vs. \texttt{/usr/bin}\\
      Remove Packaging Guidelines rule to use \texttt{/usr/sbin}
+  \\
+
+  \pause
+  2. Adjust SELinux policy to make /sbin and /bin equivalent\\
+  \textit{307 files changed, 862 insertions(+), 1261 deletions(-)}
 
   \hfill
 \end{frame}
@@ -310,7 +319,7 @@
    \hfill
 
    <crash>
-   
+
   \hfill
 
 \end{frame}
@@ -331,12 +340,12 @@
   filesystem.rpm is not used, custom fs layout
   % \\ {\small \url{https://gitlab.com/fedora/bootc/tracker/-/issues/29}}
   \\\pause
- 
+
 %%   Plan:
 %%   - add Provides: filesystem(merged-sbin) in filesystem.rpm
 %%     (https://src.fedoraproject.org/rpms/filesystem/pull-request/17)
 %%   - conditionalize rpm-ostree to make /usr/sbin a symlink
-  
+
   — Missing compat symlinks for paths \textit{not used} in \texttt{Requires}
 %%   Package c.rpm has /usr/sbin/bar (%_sbindir/bar).
 %%   After being rebuilt in the new world, it has /usr/bin/bar.
@@ -377,17 +386,17 @@
   \\\pause
 
   The merge is complete: \texttt{/bin/foo}, \texttt{/sbin/foo}, and
-  \texttt{/usr/bin/foo} all point to \texttt{/usr/bin/foo} 
+  \texttt{/usr/sbin/foo} all point to \texttt{/usr/bin/foo}
 \end{frame}
 
 \begin{frame}
   \frametitle{Lessons}
 
   \pause
-  — Change is hard
-  \\\pause
   — "Fedora Linux" is a complex ecosystem.\\
   \phantom{—} Many different actors, rpm content used in very different ways
+  \\\pause
+  — Change is hard
   \\\pause
   — Communication is important. The earlier the better
   \\\pause
@@ -403,6 +412,16 @@
   \phantom{—} (Revert changes in \texttt{filesystem} and \texttt{rpm}, dump side-tag)
   \\\pause
   — Big changes in Fedora are still possible, even if not easy
+  \\\pause
+
+  \vfill
+
+  \hspace*{\fill}
+  \includegraphics[height=2em,width=2em]{images/Fedora_logo.png}
+  \includegraphics[height=2em,width=2em]{images/Fedora_logo.png}
+  \includegraphics[height=2em,width=2em]{images/Fedora_logo.png}
+  \includegraphics[height=2em,width=2em]{images/Fedora_logo.png}
+  \hspace*{\fill}
 \end{frame}
 
 \end{document}
