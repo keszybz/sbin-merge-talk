@@ -68,7 +68,7 @@
 \begin{frame}
   \frametitle{(Some) History}
 
-  \pause
+  \pp
   1969 — \textsc{\small UNIX} is written for PDP-7\\
   \visible<2>{
     \hbox to 0pt{
@@ -78,7 +78,7 @@
     }
     \hspace{-1em}
   }%
-  \pause
+  \pp
   1971 — update for PDP-11 with two 1.5 MB disks\\
   \visible<3>{
     \hbox to 0pt{
@@ -88,24 +88,24 @@
     }
     \hspace{-1em}
   }%
-  \pause
+  \pp
   \phantom{1670} — the OS "spills over" onto the second disk\\
   \phantom{1670 —} we have a four-way split\\
-  \pause
+  \pp
   \phantom{1670} — a third disk is attached and /home is created\\
-  \pause
+  \pp
 
   split \texttt{/usr} \textit{was} useful:\\
-  \pause
+  \pp
   \phantom{1670} — fsck time proportional to fs size\\
   \phantom{1670} — periodic fsck (180 days or n mounts)\\
-  \pause
+  \pp
 
   1990 — JFS in AIX 3.1\\
   1993 — NTFS in Windows NT\\
   2001 — EXT3 in Linux\\
 
-  \pause
+  \pp
   initrds
 
   \vfill
@@ -117,7 +117,7 @@
 \begin{frame}
   \frametitle{Getting rid of separate /usr}
 
-  \pause
+  \pp
 
   \href{https://systemd.io/THE_CASE_FOR_THE_USR_MERGE}{systemd/TheCaseForTheUsrMerge}\\
 
@@ -127,11 +127,11 @@
 \begin{frame}
   \frametitle{Technical debt}
 
-  \pause
+  \pp
   technical debt — \textit{the implied cost of future reworking required when
   choosing an easy but limited solution instead of a better approach
   that could take more time} [Wikipedia]\\
-  \pause
+  \pp
 
   \hfill
   technical debt — \textit{something that made sense at the time, but now is
@@ -144,24 +144,24 @@
     … and \texttt{/usr/bin} and \texttt{/usr/sbin}\\
     … and \texttt{/usr/local/bin} and \texttt{/usr/local/sbin}}
 
-  \pause
+  \pp
   \texttt{/sbin} — utilities used for system administration (and other root-only commands)
   [FHS]\\
 
-  \pause
+  \pp
   example: \texttt{/sbin/mke2fs}\\
 
-  \pause
+  \pp
   2006 — PolicyKit first commit\\
   polkit — allow unprivileged processes to elevate privileges via IPC
   \\
 
-  \pause
+  \pp
   sudo
 
   \vfill
 
-  \pause
+  \pp
   There are no ``root-only'' programs —\\
   \hspace*\fill separate /usr/sbin/ is now just technical debt too
 \end{frame}
@@ -170,7 +170,7 @@
   \frametitle{Split \texttt{/bin} and \texttt{/sbin}}
   \framesubtitle{other reasons not to}
 
-  \pause
+  \pp
   Different distributions do the split differently:\\
   {\tiny
   Fedora has \texttt{/sbin/ip}, Debian has \texttt{/bin/ip}\\
@@ -181,18 +181,18 @@
   }
   \\
 
-  \pause
+  \pp
   Also a problem for systemd unit files\\
   (\texttt{\small ExecStart=/usr/sbin/…})
   \\
 
-  \pause
+  \pp
   \texttt{\$PATH} for all users includes both \texttt{/sbin} and \texttt{/bin}\\
   {\small (https://fedoraproject.org/wiki/Features/SbinSanity
   — Fedora 10, 2008)}
   \\
 
-  \pause
+  \pp
   systemd sets clean environment for all services, with \texttt{/usr/sbin:/usr/bin}
   \small (09082a94b64f0b3b6cec44d4d8f423ab9abd1630, 2010)
 \end{frame}
@@ -200,7 +200,7 @@
 \begin{frame}
   \frametitle{Unifying \texttt{/usr/sbin} and \texttt{/usr/bin}}
 
-  \pause
+  \pp
   Idea:~make \texttt{/usr/sbin} a symlink to \texttt{/usr/bin},\\
   \phantom{Idea:}~just like \texttt{/bin} is a symlink to \texttt{/usr/bin}\\
 
@@ -211,11 +211,11 @@
 \begin{frame}
   \frametitle{Basic file system construction in Fedora}
 
-  \pause
+  \pp
   \texttt{rpm.rpm} — the definitions of \texttt{\%\_bindir}, \texttt{\%\_sbindir}
   \\
 
-  \pause
+  \pp
   \texttt{filesystem.rpm} — the actual layout on disk
   \\
 \end{frame}
@@ -224,16 +224,16 @@
   \frametitle{The plan}
   \framesubtitle{Basic assumptions}
 
-  \pause
+  \pp
   — normal packaging changes and scriptlets implement the move
-  \\\pause
+  \\\pp
 
   — no "flag day"
-  \\\pause
+  \\\pp
   \phantom{—} — conditional preparatory changes%, compatible with both worldviews
-  \\\pause
+  \\\pp
   \phantom{—} — individual packages are updated when rebuilt
-  \\\pause
+  \\\pp
   \phantom{—} — packages remain installable at all times
 \end{frame}
 
@@ -241,13 +241,13 @@
   \frametitle{The plan}
   % https://lists.fedoraproject.org/archives/list/devel@lists.fedoraproject.org/message/3562IKYYO4YLC5IPS3WSV3DNQXW3V7QG/
 
-  \pause
+  \pp
   1. Remove Packaging Guidelines rule to use "historical" locations\\
      \hspace*{5em} for \texttt{/bin} vs. \texttt{/usr/bin}\\
      Remove Packaging Guidelines rule to use \texttt{/usr/sbin}
   \\
 
-  \pause
+  \pp
   2. Adjust SELinux policy to make /sbin and /bin equivalent\\
   \textit{307 files changed, 862 insertions(+), 1261 deletions(-)}
 
@@ -290,7 +290,7 @@
    Package \texttt{a.rpm} has \mintinline{spec}|%files: %_sbindir/foo|\\
    Package \texttt{b.rpm} has \mintinline{spec}|Requires:/usr/sbin/foo|\\
    When rebuilt, \texttt{a.rpm} now has \texttt{/usr/bin/foo}, \texttt{b.rpm} FTI.
-   \\\pause
+   \\\pp
 
    → Add compat \mintinline{spec}|Provides:/usr/sbin/foo|\\
 
@@ -314,7 +314,7 @@
   5. Update \texttt{filesystem} and \texttt{rpm}\\
   Rebuild packages that would FTI\\
   (Some time later) Rebuild all other packages
-   \\\pause
+   \\\pp
 
    \hfill
 
@@ -327,19 +327,19 @@
 \begin{frame}[fragile]
   \frametitle{What failed}
 
-  \pause
+  \pp
   – Lorax\\
   "runtime-cleanup" phase to remove various executables by path
   %%   File were unexpectedly removed (/usr/bin/losetup, /usr/bin/mkswap)
   %%   and unexpectedly left behind
   %%   (62c2a714b7aa5c572795c22cb07696dffe3c2313,
   %%    https://src.fedoraproject.org/rpms/lorax-templates-rhel/pull-request/11)
-  \\\pause
+  \\\pp
 
   — bootc/ostree/rpm-ostree\\
   filesystem.rpm is not used, custom fs layout
   % \\ {\small \url{https://gitlab.com/fedora/bootc/tracker/-/issues/29}}
-  \\\pause
+  \\\pp
 
 %%   Plan:
 %%   - add Provides: filesystem(merged-sbin) in filesystem.rpm
@@ -368,22 +368,22 @@
 \begin{frame}[fragile]
   \frametitle{The plan (v2)}
 
-  \pause
+  \pp
   5. Adjust Lorax, bootc/rpm-ostree, \texttt{filesystem}
-  \\\pause
+  \\\pp
 
   6. (In rawhide, after f41 branching)\\
   Update \texttt{filesystem} and \texttt{rpm}\\
   Rebuild packages that would FTI\\
   (Some time later) Rebuild all other packages
-  \\\pause
+  \\\pp
 
   7. filesystem.rpm will symlink \texttt{/usr/sbin} to \texttt{/usr/bin}\\
   if \texttt{/usr/sbin} only contains symlinks to \texttt{/usr/bin}
-  \\\pause
+  \\\pp
 
   8. systemd will set \texttt{\$PATH} without \texttt{/usr/sbin}
-  \\\pause
+  \\\pp
 
   The merge is complete: \texttt{/bin/foo}, \texttt{/sbin/foo}, and
   \texttt{/usr/sbin/foo} all point to \texttt{/usr/bin/foo}
@@ -392,27 +392,27 @@
 \begin{frame}
   \frametitle{Lessons}
 
-  \pause
+  \pp
   — "Fedora Linux" is a complex ecosystem.\\
   \phantom{—} Many different actors, rpm content used in very different ways
-  \\\pause
+  \\\pp
   — Change is hard
-  \\\pause
+  \\\pp
   — Communication is important. The earlier the better
-  \\\pause
+  \\\pp
   — Communication is not enough\\
   \phantom{—} Nobody anticipated problems with SELinux, Lorax, rpm-ostree…
-  \\\pause
+  \\\pp
   — CI is great. OpenQA is great
-  \\\pause
+  \\\pp
   — Lack of local CI is a problem\\
   \phantom{—} No realistic way to do a "trial run"
-  \\\pause
+  \\\pp
   — Side-tags are great\\
   \phantom{—} (Revert changes in \texttt{filesystem} and \texttt{rpm}, dump side-tag)
-  \\\pause
+  \\\pp
   — Big changes in Fedora are still possible, even if not easy
-  \\\pause
+  \\\pp
 
   \vfill
 
